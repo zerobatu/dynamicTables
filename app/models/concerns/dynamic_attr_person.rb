@@ -3,23 +3,27 @@ module DynamicAttrPerson
   extend ActiveSupport::Concern
 
   included do
-    # dynamic attribute :name
+    # list of dynamic attributes
+    new_attributes = ["first_name"]
 
-    attr_accessor :name
+    # setters and getters
+    new_attributes.each do |attr|
+      class_eval <<-RUBY
+        attr_accessor :#{attr}
 
-    validates :name, presence: true
+        def #{attr}
+          self.others.class == Hash ? self.others[:#{attr}] : nil
+        end
 
-    def name
-      self.other.class == Hash ? self.other[:name] : nil
+        def #{attr}=(val)
+          self.others = {} if others == nil
+          self.others[:#{attr}] = val
+        end
+      RUBY
     end
 
-    def name=(val)
-      self.other = {} if other == nil
-      self.other[:name] = val
-    end
-
-    # you can add many attributes
+    # validations new attributes
+    validates :first_name, presence: true
 
   end
-
 end

@@ -1,3 +1,3 @@
 class Tenancy::Base < ActiveRecord::Base
-  serialize :other, Hash
+  serialize :others, Hash
 end
